@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Bar和彦 神トレードアプリ 完全版</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Bar和彦" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23111' width='100' height='100' rx='20'/><text x='50' y='62' text-anchor='middle' font-size='40' fill='%23f5c86a'>和</text></svg>" />
+  <style>
+    :root {
+      --bg: #070707;
+      --panel: #111111;
+      --panel2: #1a1a1a;
+      --gold: #f5c86a;
+      --gold2: #d9a83e;
+      --text: #fff6df;
+      --muted: #d8c7a1;
+      --red: #ff7b7b;
+      --green: #63e6be;
+      --blue: #74c0fc;
+      --border: rgba(245, 200, 106, 0.34);
+      --shadow: 0 24px 60px rgba(0,0,0,.5);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(245,200,106,.08), transparent 34%),
+        linear-gradient(180deg, #050505 0%, #0d0d0d 100%);
+      color: var(--text);
+      padding: 14px;
+      padding-top: env(safe-area-inset-top, 14px);
+      padding-bottom: env(safe-area-inset-bottom, 14px);
+      min-height: 100dvh;
+    }
+    .wrap { max-width: 480px; margin: 0 auto; }
+    .app {
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #151515 0%, #090909 100%);
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      padding: 24px 20px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      background: radial-gradient(circle at top, rgba(245,200,106,.18), transparent 46%);
+    }
+    .mini {
+      font-size: 11px;
+      letter-spacing: .35em;
+      color: var(--gold);
+      opacity: .85;
+    }
+    h1 {
+      margin: 10px 0 6px;
+      font-size: 31px;
+      line-height: 1.15;
+    }
+    .sub {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .content {
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+    }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius: 22px;
+      padding: 14px;
+    }
+    .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    input, textarea, button {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.42);
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 16px;
+      outline: none;
+      font-family: inherit;
+    }
+    textarea { min-height: 82px; resize: vertical; }
+    button { cursor: pointer; }
+    .mode-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+    .mode-btn.active {
+      background: linear-gradient(180deg, #f6d27d, #d9a83e);
+      color: #111;
+      font-weight: 800;
+    }
+    .big { font-size: 30px; font-weight: 800; }
+    .mid { font-size: 22px; font-weight: 800; }
+    .small { font-size: 13px; color: var(--muted); }
+    .judge {
+      border-radius: 22px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.34);
+    }
+    .judge.sell { border-color: rgba(99,230,190,.58); background: rgba(16, 60, 42, .26); }
+    .judge.buy { border-color: rgba(116,192,252,.58); background: rgba(18, 47, 72, .26); }
+    .judge.stop { border-color: rgba(255,123,123,.62); background: rgba(92,22,22,.28); }
+    .danger {
+      border-color: rgba(255,123,123,.45);
+      background: rgba(92,22,22,.22);
+    }
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .goldbtn {
+      background: linear-gradient(180deg, #f6d27d, #d9a83e);
+      color: #111;
+      font-weight: 800;
+    }
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding-bottom: 8px;
+    }
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--gold);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    .save-indicator {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(99,230,190,.9);
+      color: #111;
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .save-indicator.show { opacity: 1; }
+    @media (max-width: 420px) {
+      h1 { font-size: 28px; }
+      .big { font-size: 26px; }
+      .mid { font-size: 18px; }
+    }
+    @media (min-width: 768px) {
+      .wrap { max-width: 540px; }
+      body { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="app">
+      <div class="hero">
+        <div class="mini">BAR 和彦</div>
+        <h1>神トレードアプリ 完全版</h1>
+        <p class="sub">考えるな、ルール通り</p>
+        <div class="pill">PC / Android / iOS 対応</div>
+      </div>
+
+      <div class="content">
+        <div class="grid2">
+          <div class="card">
+            <div class="label">現在価格</div>
+            <input id="currentPrice" type="number" inputmode="decimal" value="21465" />
+          </div>
+          <div class="card">
+            <div class="label">基準価格</div>
+            <input id="basePrice" type="number" inputmode="decimal" value="21465" />
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="label">投資額</div>
+            <input id="totalInvestment" type="number" inputmode="decimal" value="400000000" />
+          </div>
+          <div class="card">
+            <div class="label">保有株数</div>
+            <input id="sharesHeld" type="number" inputmode="decimal" value="19000" />
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="grid2">
+            <div>
+              <div class="label">変動率</div>
+              <div id="changePct" class="big">0.00%</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="label">モード</div>
+              <div id="modeLabel" class="mid">通常</div>
+              <div id="stepLabel" class="small">基準 5%</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="judgeBox" class="judge">
+          <div class="label">判定</div>
+          <div id="actionText" class="mid">何もしない</div>
+          <div id="actionDetail" class="small" style="margin-top:8px;">基準値の更新は不要</div>
+        </div>
+
+        <div class="card">
+          <div class="label">モード切替</div>
+          <div class="mode-grid">
+            <button class="mode-btn active" data-mode="auto">自動</button>
+            <button class="mode-btn" data-mode="3">3%</button>
+            <button class="mode-btn" data-mode="5">5%</button>
+            <button class="mode-btn" data-mode="7">7%</button>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="label">平均取得単価</div>
+            <div id="avgCost" class="mid">¥0</div>
+          </div>
+          <div class="card">
+            <div class="label">評価額</div>
+            <div id="marketValue" class="mid">¥0</div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="label">含み損益</div>
+            <div id="unrealizedPnL" class="mid">¥0</div>
+          </div>
+          <div class="card">
+            <div class="label">累計実現益</div>
+            <input id="cumRealizedProfit" type="number" inputmode="decimal" value="0" />
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="label">コア株数</div>
+            <div id="coreShares" class="mid">0株</div>
+            <div class="small" style="margin-top:6px;">絶対触らない</div>
+          </div>
+          <div class="card">
+            <div class="label">回転株数</div>
+            <div id="rotationShares" class="mid">0株</div>
+            <div class="small" style="margin-top:6px;">ここだけ動かす</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="label">今回の想定売買</div>
+          <div class="grid4">
+            <div class="card" style="padding:12px;">
+              <div class="label">対象株数</div>
+              <div id="tradeLotShares" class="mid">0株</div>
+            </div>
+            <div class="card" style="padding:12px;">
+              <div class="label">想定売却額</div>
+              <div id="sellAmount" class="mid">¥0</div>
+            </div>
+            <div class="card" style="padding:12px;">
+              <div class="label">想定実現益</div>
+              <div id="realizedProfitIfSell" class="mid">¥0</div>
+            </div>
+            <div class="card" style="padding:12px;">
+              <div class="label">利益分で買える株数</div>
+              <div id="sharesBuyable" class="mid">0株</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card danger">
+          <div class="label" style="color:#ffb3b3;">危険ライン</div>
+          <div class="mid">20,000円割れ → 回転停止</div>
+        </div>
+
+        <div class="card">
+          <div class="label">メモ</div>
+          <textarea id="memo" placeholder="今日の判断メモ"></textarea>
+        </div>
+
+        <div class="grid2">
+          <button id="updateBaseBtn" class="goldbtn">基準値を現在価格に更新</button>
+          <button id="resetBtn">リセット</button>
+        </div>
+
+        <div class="footer">上げても利益、下げても利益</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="saveIndicator" class="save-indicator">保存しました</div>
+
+  <script>
+    const state = { mode: 'auto', coreRatio: 70, rotationRatio: 30 };
+    const $ = id => document.getElementById(id);
+    const yen = n => '¥' + Math.round(n).toLocaleString();
+    const shares = n => (Math.round(n * 100) / 100).toLocaleString() + '株';
+
+    // --- localStorage 自動保存/復元 ---
+    const SAVE_KEY = 'bar_kazuhiko_data';
+    const FIELDS = ['currentPrice','basePrice','totalInvestment','sharesHeld','cumRealizedProfit'];
+
+    function saveData() {
+      try {
+        const data = {};
+        FIELDS.forEach(id => data[id] = $(id).value);
+        data.memo = $('memo').value;
+        data.mode = state.mode;
+        localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+        const ind = $('saveIndicator');
+        ind.classList.add('show');
+        setTimeout(() => ind.classList.remove('show'), 1200);
+      } catch(e) {}
+    }
+
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        FIELDS.forEach(id => { if (data[id] != null) $(id).value = data[id]; });
+        if (data.memo != null) $('memo').value = data.memo;
+        if (data.mode) {
+          state.mode = data.mode;
+          document.querySelectorAll('.mode-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.mode === state.mode);
+          });
+        }
+      } catch(e) {}
+    }
+
+    let saveTimer;
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveData, 800);
+    }
+
+    // --- トレードロジック ---
+    function getStep(change) {
+      if (state.mode === '3') return { step: 3, label: 'レンジ' };
+      if (state.mode === '5') return { step: 5, label: '通常' };
+      if (state.mode === '7') return { step: 7, label: '爆上げ' };
+      if (Math.abs(change) < 2) return { step: 3, label: 'レンジ' };
+      if (change >= 5) return { step: 7, label: '爆上げ' };
+      return { step: 5, label: '通常' };
+    }
+
+    function render() {
+      const currentPrice = Number($('currentPrice').value || 0);
+      const basePrice = Number($('basePrice').value || 0);
+      const totalInvestment = Number($('totalInvestment').value || 0);
+      const sharesHeld = Number($('sharesHeld').value || 0);
+      const cumRealizedProfit = Number($('cumRealizedProfit').value || 0);
+
+      const change = basePrice > 0 ? ((currentPrice - basePrice) / basePrice) * 100 : 0;
+      const { step, label } = getStep(change);
+      const avgCost = sharesHeld > 0 ? totalInvestment / sharesHeld : 0;
+      const coreShares = sharesHeld * (state.coreRatio / 100);
+      const rotationShares = sharesHeld * (state.rotationRatio / 100);
+      const tradeLotShares = rotationShares * (step / 100);
+      const sellAmount = tradeLotShares * currentPrice;
+      const costOfTradeLot = tradeLotShares * avgCost;
+      const realizedProfitIfSell = sellAmount - costOfTradeLot;
+      const sharesBuyable = realizedProfitIfSell > 0 ? realizedProfitIfSell / currentPrice : 0;
+      const marketValue = sharesHeld * currentPrice;
+      const unrealizedPnL = marketValue - totalInvestment;
+
+      $('changePct').textContent = change.toFixed(2) + '%';
+      $('modeLabel').textContent = label;
+      $('stepLabel').textContent = '基準 ' + step + '%';
+      $('avgCost').textContent = yen(avgCost);
+      $('marketValue').textContent = yen(marketValue);
+      $('unrealizedPnL').textContent = yen(unrealizedPnL);
+      $('unrealizedPnL').className = 'mid ' + (unrealizedPnL >= 0 ? 'green' : 'red');
+      $('coreShares').textContent = shares(coreShares);
+      $('rotationShares').textContent = shares(rotationShares);
+      $('tradeLotShares').textContent = shares(tradeLotShares);
+      $('sellAmount').textContent = yen(sellAmount);
+      $('realizedProfitIfSell').textContent = yen(realizedProfitIfSell);
+      $('realizedProfitIfSell').className = 'mid ' + (realizedProfitIfSell >= 0 ? 'green' : 'red');
+      $('sharesBuyable').textContent = shares(sharesBuyable);
+
+      const judgeBox = $('judgeBox');
+      judgeBox.className = 'judge';
+
+      if (currentPrice <= 20000) {
+        $('actionText').textContent = '回転停止';
+        $('actionDetail').textContent = '20,000円割れ。防御モードへ';
+        judgeBox.classList.add('stop');
+      } else if (change >= step) {
+        $('actionText').textContent = '回転分の' + step + '%売る';
+        $('actionDetail').textContent = '想定売却額 ' + yen(sellAmount) + ' / 想定実現益 ' + yen(realizedProfitIfSell);
+        judgeBox.classList.add('sell');
+      } else if (change <= -step) {
+        $('actionText').textContent = '利益分で買い戻す';
+        $('actionDetail').textContent = '買戻し余力 ' + yen(Math.max(cumRealizedProfit, 0)) + ' / 目安 ' + shares(Math.max(cumRealizedProfit, 0) / Math.max(currentPrice, 1));
+        judgeBox.classList.add('buy');
+      } else {
+        $('actionText').textContent = '何もしない';
+        $('actionDetail').textContent = '基準値の更新は不要';
+      }
+
+      scheduleSave();
+    }
+
+    // --- イベント ---
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.mode = btn.dataset.mode;
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+      });
+    });
+
+    FIELDS.forEach(id => $(id).addEventListener('input', render));
+    $('memo').addEventListener('input', scheduleSave);
+
+    $('updateBaseBtn').addEventListener('click', () => {
+      $('basePrice').value = $('currentPrice').value;
+      render();
+    });
+
+    $('resetBtn').addEventListener('click', () => {
+      if (!confirm('データをリセットしますか？')) return;
+      $('currentPrice').value = 21465;
+      $('basePrice').value = 21465;
+      $('totalInvestment').value = 400000000;
+      $('sharesHeld').value = 19000;
+      $('cumRealizedProfit').value = 0;
+      $('memo').value = '';
+      state.mode = 'auto';
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.mode-btn[data-mode="auto"]').classList.add('active');
+      render();
+    });
+
+    // --- Service Worker ---
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+
+    // --- 起動 ---
+    loadData();
+    render();
+  </script>
+</body>
+</html>
